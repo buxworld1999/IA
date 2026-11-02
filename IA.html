@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfoDocs - Energía y Transmisión</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/ia.css">
+</head>
+
+<body>
+
+    <!-- Contenido Principal de la Página -->
+    <main>
+        <section class="hero">
+            <h1>Ingeniería Eléctrica y Transmisión</h1>
+            <p>Conoce los fundamentos técnicos de los sistemas de atenuación de iluminación y las líneas de transmisión
+                de alta tensión.</p>
+        </section>
+
+        <section class="content-container">
+            <div class="card">
+                <h2>Atenuadores (Dimmers)</h2>
+                <p>Un atenuador electrónico regula la energía que recibe una luminaria mediante el principio de
+                    <strong>corte de fase (Phase-Cut)</strong>, funcionando como un interruptor de altísima velocidad
+                    que reduce el voltaje eficaz.
+                </p>
+                <p>Existen dos tecnologías principales:</p>
+                <ul>
+                    <li><strong>Leading-Edge (TRIAC):</strong> Corta al inicio de la onda. Ideal para bombillos
+                        incandescentes tradicionales.</li>
+                    <li><strong>Trailing-Edge (MOSFET):</strong> Corta al final de la onda. Diseñado específicamente
+                        para bombillos LED modernos.</li>
+                </ul>
+                <p>Conectar un bombillo incorrecto genera fallas como parpadeo (flickering) o zumbidos molestos
+                    (humming).</p>
+            </div>
+
+            <div class="card">
+                <h2>Conductor Arvidal</h2>
+                <p>El conductor Arvidal es una aleación de Aluminio-Magnesio-Silicio (6201-T81) usada en líneas aéreas
+                    de transmisión de energía. Combina la ligereza del aluminio con una enorme resistencia mecánica.</p>
+                <p>Parámetros y Fenómenos críticos:</p>
+                <ul>
+                    <li><strong>Efecto Skin:</strong> La corriente viaja por la superficie exterior, aumentando la
+                        resistencia en AC.</li>
+                    <li><strong>Efecto Corona:</strong> Ionización del aire alrededor del cable cuando el campo
+                        eléctrico supera la rigidez dieléctrica, generando luz azul, zumbido y pérdidas.</li>
+                    <li><strong>Efecto Ferranti:</strong> Cuando el voltaje al final de una línea larga vacía supera al
+                        del origen por capacitancia.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Widget de Chat Flotante -->
+    <div class="chat-widget">
+        <div class="chat-container" id="chatBox">
+            <div class="chat-header">
+                <div class="avatar">AI</div>
+                <div class="header-info">
+                    <h1>Nexus</h1>
+                    <p><span class="status-dot"></span> Búsqueda Activa (Atenuadores & Arvidal)</p>
+                </div>
+                <button class="close-btn" id="closeChatBtn" title="Minimizar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    ¡Hola! Soy tu asistente de información.<br><br>
+                    Puedes preguntarme detalles profundos sobre:<br>
+                    <ul>
+                        <li>Atenuadores (TRIAC, Fallas, etc.)</li>
+                        <li>Conductor Arvidal (Efecto Corona, Ampacidad, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" class="chat-input" placeholder="Escribe tu pregunta..."
+                        autocomplete="off">
+                </div>
+                <button id="sendBtn" class="send-btn" title="Enviar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <button class="chat-toggle" id="toggleChatBtn" title="Abrir Asistente">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+            </svg>
+        </button>
+    </div>
+
+    <script src="static/database.js"></script>
+    <script>
+        // --- Lógica del Widget ---
+        const chatBox = document.getElementById('chatBox');
+        const toggleChatBtn = document.getElementById('toggleChatBtn');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+
+        toggleChatBtn.addEventListener('click', () => {
+            chatBox.classList.add('open');
+            toggleChatBtn.style.transform = 'scale(0)';
+        });
+
+        closeChatBtn.addEventListener('click', () => {
+            chatBox.classList.remove('open');
+            toggleChatBtn.style.transform = 'scale(1)';
+        });
+
+        // --- Lógica del Chat ---
+
+        const paragraphs = databaseText.split('\n').filter(p => p.trim().length > 20);
+
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "message " + sender;
+            msgDiv.innerHTML = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function formatText(text) {
+            let formatted = text.replace(/([^:<>\n]+):/g, '<strong>$1:</strong>');
+            return formatted;
+        }
+
+        function showTyping() {
+            chatMessages.appendChild(typingIndicator);
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+            if (typingIndicator.parentNode === chatMessages) {
+                chatMessages.removeChild(typingIndicator);
+            }
+        }
+
+        function searchDatabase(query) {
+            const searchTerms = query.toLowerCase().replace(/[¿?.,¡!]/g, '').split(' ').filter(word => word.length > 2);
+
+            if (searchTerms.length === 0) {
+                return "Por favor, escribe una pregunta con más detalle.";
+            }
+
+            let bestMatches = [];
+
+            paragraphs.forEach((p, index) => {
+                let score = 0;
+                const pLower = p.toLowerCase();
+
+                searchTerms.forEach(term => {
+                    if (pLower.includes(term)) {
+                        score += 2;
+                        if (pLower.split(/[\s,.;:()]+/).includes(term)) score += 3;
+                    }
+                });
+
+                if (score > 0) {
+                    bestMatches.push({ text: p, score: score, index: index });
+                }
+            });
+
+            bestMatches.sort((a, b) => b.score - a.score);
+
+            if (bestMatches.length > 0 && bestMatches[0].score >= 2) {
+                let response = "Según los documentos:<br><br>";
+                response += bestMatches[0].text;
+
+                if (bestMatches.length > 1 && bestMatches[1].score >= bestMatches[0].score - 2) {
+                    response += "<br><br>" + bestMatches[1].text;
+                }
+
+                return response;
+            } else {
+                return "Lo siento, no encontré información exacta sobre eso en los documentos de Atenuadores o Arvidal. ¿Podrías intentar usar otras palabras clave?";
+            }
+        }
+
+        async function getYouTubeLink(query) {
+            const YOUTUBE_API_KEY = 'AIzaSyD6jx8sisqMC483JQ95sYxpa82Eov70I-s'; // Tu clave de Google
+
+            try {
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(query)}&type=video&key=${YOUTUBE_API_KEY}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data.items && data.items.length > 0) {
+                    return `https://www.youtube.com/watch?v=${data.items[0].id.videoId}`;
+                }
+            } catch (e) {
+                console.error("Error con YouTube API", e);
+            }
+            return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        }
+
+        async function getImage(query) {
+            try {
+                // 1. Buscar en Wikipedia y revisar los primeros 3 resultados para maximizar las chances de encontrar imagen
+                const searchUrl = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+                const searchRes = await fetch(searchUrl);
+                const searchData = await searchRes.json();
+
+                if (searchData.query && searchData.query.search.length > 0) {
+                    // Iterar sobre los primeros 3 resultados buscando el primero que tenga imagen
+                    for (let i = 0; i < Math.min(3, searchData.query.search.length); i++) {
+                        const title = searchData.query.search[i].title;
+
+                        // Traer tanto 'original' como 'thumbnail' por si la original no existe
+                        const imgUrl = `https://es.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original|thumbnail&pithumbsize=600&titles=${encodeURIComponent(title)}&origin=*`;
+                        const imgRes = await fetch(imgUrl);
+                        const imgData = await imgRes.json();
+
+                        const pages = imgData.query.pages;
+                        const pageId = Object.keys(pages)[0];
+
+                        if (pageId !== "-1") {
+                            if (pages[pageId].original) {
+                                return pages[pageId].original.source;
+                            } else if (pages[pageId].thumbnail) {
+                                return pages[pageId].thumbnail.source;
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error con Wikipedia API", e);
+            }
+
+            // Opcional: Unsplash API si prefieres usar esta plataforma
+            const UNSPLASH_ACCESS_KEY = 'PON_TU_API_KEY_AQUI'; // Reemplazar con clave de Unsplash
+            if (UNSPLASH_ACCESS_KEY !== 'PON_TU_API_KEY_AQUI') {
+                const unsplashUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${UNSPLASH_ACCESS_KEY}`;
+                try {
+                    const unsplashRes = await fetch(unsplashUrl);
+                    const unsplashData = await unsplashRes.json();
+                    if (unsplashData.results && unsplashData.results.length > 0) {
+                        return unsplashData.results[0].urls.regular;
+                    }
+                } catch (e) {
+                    console.error("Error con Unsplash API", e);
+                }
+            }
+
+            return null;
+        }
+
+        async function handleSend() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            appendMessage(query, 'user');
+            userInput.value = '';
+            showTyping();
+
+            // Espera simulada para dar un efecto natural
+            await new Promise(r => setTimeout(r, 800 + Math.random() * 1000));
+
+            let response = formatText(searchDatabase(query));
+
+            try {
+                // 1. Obtener enlace de YouTube
+                const ytLink = await getYouTubeLink(query);
+                if (ytLink) {
+                    response += `<br><br>📺 <strong>Video sugerido:</strong> <a href="${ytLink}" target="_blank" style="color: #818cf8; text-decoration: none;">Ver en YouTube</a>`;
+                }
+
+                // 2. Obtener imagen relacionada
+                const imgUrl = await getImage(query);
+                if (imgUrl) {
+                    response += `<br><br>📸 <strong>Imagen de referencia:</strong><br><img src="${imgUrl}" alt="${query}" style="max-width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);">`;
+                }
+            } catch (error) {
+                console.error("Error integrando APIs:", error);
+            }
+
+            hideTyping();
+            appendMessage(response, 'bot');
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+    </script>
+</body>
+
+</html>
